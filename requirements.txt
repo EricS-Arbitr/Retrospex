@@ -1,0 +1,31 @@
+# Core Dependencies
+pyspark==3.5.3
+delta-spark==3.1.0
+
+# Database Connectivity
+sqlalchemy>=2.0.0
+pymysql>=1.1.0
+
+# Data Analysis
+pandas>=2.0.0
+
+# Scheduling
+schedule>=1.2.0
+
+# HTTP Requests (for Superset configuration)
+requests>=2.31.0
+
+# Reporting
+jinja2>=3.1.0
+
+# Python Standard Library (no installation needed)
+# - json (built-in)
+# - datetime (built-in)
+# - hashlib (built-in)
+# - argparse (built-in)
+# - logging (built-in)
+# - pathlib (built-in)
+# - os (built-in)
+# - sys (built-in)
+# - time (built-in)
+# - builtins (built-in)
