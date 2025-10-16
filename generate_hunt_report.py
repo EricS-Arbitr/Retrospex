@@ -4,20 +4,15 @@ import pandas as pd
 from datetime import datetime, timedelta
 from jinja2 import Template
 import json
+import config
 
 class HuntReportGenerator:
     """Generate executive reports from hunt results"""
-    
+
     def __init__(self, mysql_config=None):
         if mysql_config is None:
-            mysql_config = {
-                'host': '172.25.41.34',
-                'port': 3306,
-                'database': 'hunt_results',
-                'user': 'hunt_admin',
-                'password': 'admin'
-            }
-        
+            mysql_config = config.MYSQL_CONFIG
+
         self.mysql_config = mysql_config
         self.engine = self._create_engine()
     
@@ -234,9 +229,9 @@ class HuntReportGenerator:
     
     def save_report(self, days=7, output_path=None):
         """Generate and save report"""
-        
+
         if output_path is None:
-            output_path = f"/home/eric_s/dev_work/github.com/EricS-Arbitr/retro-hunt-lab/end_to_end/hunt_results/hunt_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
+            output_path = config.HUNT_RESULTS_DIR / f"hunt_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
         
         # Generate report data
         report_data = self.generate_executive_summary(days=days)

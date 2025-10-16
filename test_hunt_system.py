@@ -7,6 +7,7 @@ from hunt_orchestrator import HuntOrchestrator
 from export_to_superset import SupersetExporter
 from generate_hunt_report import HuntReportGenerator
 from datetime import date, timedelta
+import config
 
 def run_system_test():
     """Run complete system test"""
@@ -78,10 +79,14 @@ def run_system_test():
     
     try:
         from sqlalchemy import create_engine
-        
-        engine = create_engine(
-            'mysql+pymysql://hunt_admin:admin@172.25.41.34:3306/hunt_results'
+
+        # Build connection string from config
+        mysql_config = config.MYSQL_CONFIG
+        connection_string = (
+            f"mysql+pymysql://{mysql_config['user']}:{mysql_config['password']}"
+            f"@{mysql_config['host']}:{mysql_config['port']}/{mysql_config['database']}"
         )
+        engine = create_engine(connection_string)
         
         # Check required tables exist
         tables_query = "SHOW TABLES"

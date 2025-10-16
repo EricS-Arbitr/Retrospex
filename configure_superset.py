@@ -2,14 +2,15 @@
 import requests
 import json
 from requests.auth import HTTPBasicAuth
+import config
 
 class SupersetConfigurator:
     """Configure Superset dashboards programmatically"""
-    
-    def __init__(self, superset_url="http://172.25.41.34:8088"):
-        self.base_url = superset_url
-        self.username = "admin"
-        self.password = "admin"
+
+    def __init__(self, superset_url=None):
+        self.base_url = superset_url or config.SUPERSET_BASE_URL
+        self.username = config.SUPERSET_USERNAME
+        self.password = config.SUPERSET_PASSWORD
         self.session = requests.Session()
         self.csrf_token = None
         self.access_token = None
@@ -70,11 +71,11 @@ class SupersetConfigurator:
             "driver": "pymysql",
             "configuration_method": "dynamic_form",
             "parameters": {
-                "host": "172.25.41.34",
-                "port": 3306,
-                "database": "hunt_results",
-                "username": "hunt_admin",
-                "password": "admin"
+                "host": config.MYSQL_CONFIG['host'],
+                "port": config.MYSQL_CONFIG['port'],
+                "database": config.MYSQL_CONFIG['database'],
+                "username": config.MYSQL_CONFIG['user'],
+                "password": config.MYSQL_CONFIG['password']
             },
             "expose_in_sqllab": True,
             "allow_run_async": True,

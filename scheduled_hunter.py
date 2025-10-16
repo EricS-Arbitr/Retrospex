@@ -4,13 +4,15 @@ import time
 from datetime import datetime, date, timedelta
 from hunt_orchestrator import HuntOrchestrator
 import logging
+import config
 
 # Setup logging
+log_file = config.LOGS_DIR / "hunt_scheduler.log"
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('/home/eric_s/dev_work/github.com/EricS-Arbitr/retro-hunt-lab/end_to_end/hunt_scheduler.log'),
+        logging.FileHandler(str(log_file)),
         logging.StreamHandler()
     ]
 )

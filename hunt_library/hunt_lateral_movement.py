@@ -1,4 +1,9 @@
 # hunt_library/hunt_lateral_movement.py
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+import config
+
 from hunt_base import HuntBase
 from pyspark.sql.functions import *
 from pyspark.sql.types import BooleanType
@@ -40,7 +45,7 @@ class HuntLateralMovement(HuntBase):
         print(f"Parameters: time_window={time_window}min, min_hosts={min_hosts}")
         
         # Read Windows Security Event logs
-        delta_path = "/home/eric_s/dev_work/github.com/EricS-Arbitr/retro-hunt-lab/data2/win_security"
+        delta_path = str(config.WIN_SECURITY_LOGS)
         df = self.read_delta_table(delta_path, start_date, end_date)
         
         # Filter for logon events (Event ID 4624, 4625, 4648)

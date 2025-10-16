@@ -3,8 +3,10 @@ from datetime import datetime, date, timedelta
 import sys
 import os
 from pathlib import Path
+import config
 
-sys.path.append('/home/eric_s/dev_work/github.com/EricS-Arbitr/retro-hunt-lab/end_to_end/hunt_library')
+# Add hunt_library to path for imports
+sys.path.insert(0, str(config.HUNT_LIBRARY_DIR))
 
 from hunt_base import HuntBase
 from hunt_c2_beaconing import HuntC2Beaconing
@@ -16,13 +18,7 @@ class HuntOrchestrator:
     
     def __init__(self):
         self.spark = self._create_spark_session()
-        self.mysql_config = {
-            'host': '172.25.41.34',
-            'port': 3306,
-            'database': 'hunt_results',
-            'user': 'root',
-            'password': 'We3King$'
-        }
+        self.mysql_config = config.MYSQL_CONFIG
         # Register available hunts
         self.hunts = {
             'c2_beaconing': HuntC2Beaconing(self.spark, self.mysql_config),

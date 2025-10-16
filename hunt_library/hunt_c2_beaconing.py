@@ -1,4 +1,9 @@
 # hunt_library/hunt_c2_beaconing.py
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+import config
+
 from hunt_base import HuntBase
 from pyspark.sql.functions import *
 from pyspark.sql.window import Window
@@ -39,7 +44,7 @@ class HuntC2Beaconing(HuntBase):
         
 
         # Read Zeek connection logs
-        delta_path = "/home/eric_s/dev_work/github.com/EricS-Arbitr/retro-hunt-lab/data2/zeek_conn_logs"
+        delta_path = str(config.ZEEK_CONN_LOGS)
         df = self.read_delta_table(delta_path, start_date, end_date)
         
         records_analyzed = df.count()

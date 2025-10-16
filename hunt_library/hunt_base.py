@@ -2,7 +2,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from datetime import datetime, date
 import json
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 import pandas as pd
 
 class HuntBase:
@@ -83,51 +83,53 @@ class HuntBase:
     def _start_execution(self, start_date, end_date, parameters):
         """Record hunt execution start in MySQL"""
         engine = self._get_mysql_engine()
-        
-        query = """
-        INSERT INTO hunt_executions 
+
+        query = text("""
+        INSERT INTO hunt_executions
         (hunt_name, hunt_version, execution_start, status, date_range_start, date_range_end, parameters)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """
-        
+        VALUES (:hunt_name, :hunt_version, :execution_start, :status, :date_range_start, :date_range_end, :parameters)
+        """)
+
         with engine.connect() as conn:
             result = conn.execute(
                 query,
-                (
-                    self.hunt_name,
-                    self.hunt_version,
-                    datetime.now(),
-                    'running',
-                    start_date,
-                    end_date,
-                    json.dumps(parameters)
-                )
+                {
+                    'hunt_name': self.hunt_name,
+                    'hunt_version': self.hunt_version,
+                    'execution_start': datetime.now(),
+                    'status': 'running',
+                    'date_range_start': start_date,
+                    'date_range_end': end_date,
+                    'parameters': json.dumps(parameters)
+                }
             )
+            conn.commit()
             return result.lastrowid
     
     def _complete_execution(self, status, records_analyzed=0, findings_count=0, error_message=None):
         """Record hunt execution completion"""
         engine = self._get_mysql_engine()
-        
-        query = """
-        UPDATE hunt_executions 
-        SET execution_end = %s, status = %s, records_analyzed = %s, 
-            findings_count = %s, error_message = %s
-        WHERE execution_id = %s
-        """
-        
+
+        query = text("""
+        UPDATE hunt_executions
+        SET execution_end = :execution_end, status = :status, records_analyzed = :records_analyzed,
+            findings_count = :findings_count, error_message = :error_message
+        WHERE execution_id = :execution_id
+        """)
+
         with engine.connect() as conn:
             conn.execute(
                 query,
-                (
-                    datetime.now(),
-                    status,
-                    records_analyzed,
-                    findings_count,
-                    error_message,
-                    self.execution_id
-                )
+                {
+                    'execution_end': datetime.now(),
+                    'status': status,
+                    'records_analyzed': records_analyzed,
+                    'findings_count': findings_count,
+                    'error_message': error_message,
+                    'execution_id': self.execution_id
+                }
             )
+            conn.commit()
     
     def _store_findings(self, results):
         """Store findings in MySQL"""

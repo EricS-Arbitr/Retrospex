@@ -3,20 +3,15 @@ from sqlalchemy import create_engine, text
 import pandas as pd
 from datetime import datetime, timedelta
 import json
+import config
 
 class SupersetExporter:
     """Export hunt results to MySQL for Superset dashboards"""
-    
+
     def __init__(self, mysql_config=None):
         if mysql_config is None:
-            mysql_config = {
-                'host': '172.25.41.34',
-                'port': 3306,
-                'database': 'hunt_results',
-                'user': 'root',
-                'password': 'We3King$'
-            }
-        
+            mysql_config = config.MYSQL_CONFIG
+
         self.mysql_config = mysql_config
         self.engine = self._create_engine()
 
